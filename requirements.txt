@@ -1,0 +1,7 @@
+langchain_core
+langchain_groq
+pymysql
+pandas
+langchain
+streamlit
+pydantic
