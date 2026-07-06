@@ -13,22 +13,25 @@ if "conn" not in st.session_state:
     st.session_state.conn = None
 
 if "schema" not in st.session_state:
-    st.session_state.schema=""
+    st.session_state.schema = ""
+
+if "tables" not in st.session_state:
+    st.session_state.tables = ""
 
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-host=os.getenv("host")
-user=os.getenv("user")
-password=os.getenv("password")
-database=os.getenv("database")
-port=os.getenv("port")
+host = os.getenv("host")
+user = os.getenv("user")
+password = os.getenv("password")
+database = os.getenv("database")
+port = os.getenv("port")
 
 if st.session_state.conn is None:
     try:
-        conn = pymysql.connect(host=host,user=user,password=password,database=database,port=int(port),connect_timeout=10)
+        conn = pymysql.connect(host=host, user=user, password=password,database=database, port=int(port), connect_timeout=10)
         schema, tbl = get_schema(conn, database)
         st.session_state.conn = conn
         st.session_state.schema = schema
@@ -56,17 +59,12 @@ query = st.text_area(
 
 run_btn = st.button("Get Results")
 
-
-
 if run_btn:
     if query:
-        start=time.time()
+        start = time.time()
         with st.spinner("Analyzing..."):
-            response=run_pipe(query,st.session_state.conn,st.session_state.schema)
-        st.success(f"Analysis Completed in {time.time()-start} seconds..!")
+            response = run_pipe(query, st.session_state.conn, st.session_state.schema)
+        st.success(f"Analysis Completed in {round(time.time()-start,2)} seconds..!")
         st.write(response)
-
     else:
         st.warning("Please enter a query.")
-
-
