@@ -1,4 +1,5 @@
 langchain_core
+langchain-google-genai
 langchain_groq
 pymysql
 pandas
