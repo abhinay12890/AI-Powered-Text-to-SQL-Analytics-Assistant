@@ -6,6 +6,8 @@ A natural-language analytics tool that lets you ask business questions in plain 
 > Get: A generated SQL query, executed results, and a plain-language business summary — no SQL knowledge required from the end user.
 
 ---
+![ui](ui.png)
+
 
 ## How It Works
 
