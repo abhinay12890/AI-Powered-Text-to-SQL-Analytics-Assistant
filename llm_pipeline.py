@@ -11,8 +11,8 @@ from langchain_core.prompts import ChatPromptTemplate
 import pandas as pd
 from schemas import SQLPlan
 
-google_api=st.secrets("google_api")
-groq_api=st.secrets("groq_api")
+google_api=st.secrets["google_api"]
+groq_api=st.secrets["groq_api"]
 
 gem_llm=init_chat_model("google_genai:gemini-2.5-flash",api_key=google_api)
 llm=init_chat_model("groq:llama-3.1-8b-instant",api_key=groq_api)
