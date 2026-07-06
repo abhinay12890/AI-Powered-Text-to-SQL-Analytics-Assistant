@@ -14,17 +14,23 @@ A natural-language analytics tool that lets you ask business questions in plain 
 ```
 Natural Language Question
         ↓
-Dynamic Schema Extraction (live MySQL introspection)
+Dynamic Schema Extraction
         ↓
-LLM Generates SQL Execution Plan (Gemini 2.5 Flash)
+LLM Generates SQL Execution Plan (Gemini 2.5-Flash)
+(single or multiple queries)
         ↓
-LLM Validates the SQL (Llama 3.1 8B via Groq)
+SQL Validation (Groq / Gemini LLM)
         ↓
-Retry / Repair Loop (up to 2 attempts if validation fails)
+Retry / Repair
         ↓
-SQL Execution (read-only, keyword-guarded)
+Execute Query 1
+Execute Query 2
+...
+Collect Results
         ↓
-Business Insight Generation (Llama 3.1 8B)
+LLM Synthesizes Results (Groq/ Gemini LLM)
+        ↓
+Business Insight
 ```
 
 Each question is handled by a dedicated LLM call at each stage, using **Pydantic structured outputs** so the pipeline never has to parse free-text LLM responses — every stage returns a typed, validated object.
@@ -34,7 +40,7 @@ Each question is handled by a dedicated LLM call at each stage, using **Pydantic
 ## Key Engineering Features
 
 - **Dynamic schema extraction** — reads the live database's `information_schema` on connect, so the LLM always sees the actual table/column structure rather than a hardcoded description.
-- **Multi-query planning** — a single question like *"highest revenue state and most used payment method"* is automatically split into multiple independent, correctly-named SQL queries rather than being forced into one convoluted statement.
+- **Multi-query planning** — complex business questions are decomposed into multiple SQL queries when necessary. Each query executes independently and the final LLM synthesizes all intermediate results into one business answer, allowing questions that cannot be answered with a single SQL statement.
 - **Structured output via Pydantic** — SQL generation and validation both return typed schemas (`SQLPlan`, `ValidationResult`), eliminating brittle text parsing.
 - **Two-model design** — Gemini 2.5 Flash handles generation, Llama 3.1 8B (Groq) handles validation and final reporting, testing both a slower/stronger model and a fast/cheap model in the same pipeline.
 - **Validation before execution** — every generated query is checked against an 8-point rubric (intent match, schema correctness, join correctness, filters, aggregation, sorting/limiting, semantic correctness, and a DML-safety check) before anything touches the database.
